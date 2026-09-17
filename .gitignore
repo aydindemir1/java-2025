@@ -1,24 +1,31 @@
-/target/
-/bin/
-
-/.settings/
-.classpath
-.project
-.factorypath
-
+# Maven
 **/target/
 **/bin/
+
+# Eclipse / STS
 **/.settings/
 **/.factorypath
+**/.classpath
+**/.project
 
+# Node / Angular / React
+**/node_modules/
+**/dist/
+**/.angular/
+**/.cache/
+
+# IDE
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# Workspaces
 workspace-sts-5/
 workspace-sts-5-clean/
 
+# Archives
 *.zip
 
-.idea/
-.vscode/
-*.iml
-
+# OS
 .DS_Store
 Thumbs.db
