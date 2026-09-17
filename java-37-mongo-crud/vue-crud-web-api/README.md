@@ -1,75 +1,44 @@
-# Vue 3 example with Axios & Vue Router: Build CRUD App
-Build a Vue.js 3 CRUD example to consume REST APIs, display and modify data using Axios and Vue Router.
-- Each Tutorial has id, title, description, published status.
-- We can create, retrieve, update, delete Tutorials.
-- There is a Search bar for finding Tutorials by title.
+# Vue 3 CRUD Frontend
 
-![vue-3-crud-example-axios-tutorial](vue-3-crud-example-axios-tutorial.png)
+Vue 3 kullanılarak geliştirilmiş bir **Tutorial CRUD frontend** uygulamasıdır.
 
-For instruction, please visit:
-> [Vue 3 CRUD example with Axios & Vue Router](https://bezkoder.com/vue-3-crud/)
+Uygulama, Spring Boot + MongoDB backend REST API ile haberleşerek tutorial kayıtları üzerinde listeleme, ekleme, güncelleme, silme ve başlığa göre arama işlemlerini gerçekleştirir.
 
-Typescript version:
-> [Vue 3 Typescript example with Axios: Build CRUD App](https://bezkoder.com/vue-3-typescript-axios/)
+## Technologies
 
-More Practice:
-> [Vue 2 CRUD App with Vue Router & Axios](https://bezkoder.com/vue-js-crud-app/)
+- Vue 3
+- Vue Router 4
+- Axios
+- Bootstrap 4.6
+- JavaScript
+- Vue CLI
+- Babel
+- ESLint
 
-> [Vue Pagination with Axios and API example](https://bezkoder.com/vue-pagination-axios/)
+## Features
 
-> [Vue.js JWT Authentication with Vuex and Vue Router](https://bezkoder.com/jwt-vue-vuex-authentication/)
+- Tutorial listeleme
+- Tutorial detay görüntüleme
+- Yeni tutorial ekleme
+- Tutorial güncelleme
+- Tutorial silme
+- Tüm tutorial kayıtlarını silme
+- Başlığa göre arama
+- Published / Unpublished durumunu güncelleme
+- Vue Router ile sayfa yönlendirme
+- Axios ile REST API entegrasyonu
 
-> [Vue File Upload example using Axios](https://bezkoder.com/vue-axios-file-upload/)
+## Project Structure
 
-Fullstack with Node.js Express:
-> [Vue.js + Node.js Express + MySQL](https://bezkoder.com/vue-js-node-js-express-mysql-crud-example/)
-
-> [Vue.js + Node.js Express + PostgreSQL](https://bezkoder.com/vue-node-express-postgresql/)
-
-> [Vue.js + Node.js Express + MongoDB](https://bezkoder.com/vue-node-express-mongodb-mevn-crud/)
-
-Fullstack with Spring Boot:
-> [Vue.js + Spring Boot](https://bezkoder.com/spring-boot-vue-js-crud-example/)
-
-> [Vue.js + Spring Boot + MongoDB](https://bezkoder.com/spring-boot-vue-mongodb/)
-
-Fullstack with Django:
-> [Vue.js + Django](https://bezkoder.com/django-vue-js-rest-framework/)
-
-Integration (run back-end & front-end on same server/port)
-> [Integrate Vue.js with Spring Boot](https://bezkoder.com/integrate-vue-spring-boot/)
-
-> [Integrate Vue App with Node.js Express](https://bezkoder.com/serve-vue-app-express/)
-
-Serverless with Firebase:
-> [Vue Firebase Realtime Database: CRUD example](https://bezkoder.com/vue-firebase-realtime-database/)
-
-> [Vue Firestore CRUD example](https://bezkoder.com/vue-firestore-crud/)
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```text
+src
+├── components
+│   ├── AddTutorial.vue
+│   ├── Tutorial.vue
+│   └── TutorialsList.vue
+├── services
+│   └── TutorialDataService.js
+├── http-common.js
+├── router.js
+├── App.vue
+└── main.js
