@@ -34,6 +34,9 @@ The project covers the complete request flow from user registration and login to
 - PostgreSQL database (active)
 - MySQL database (alternative)
 - Flyway database migrations
+- OpenAPI / Swagger UI documentation
+- Unified global exception handling
+- Standard API error responses
 - Docker Compose development databases
 
 ---
@@ -54,6 +57,7 @@ The project covers the complete request flow from user registration and login to
 | PostgreSQL | Primary relational database |
 | MySQL | Alternative relational database |
 | Flyway | Versioned schema migrations |
+| springdoc-openapi | OpenAPI 3 + Swagger UI |
 | Docker Compose | Local PostgreSQL/MySQL environments |
 | Maven | Build and dependency management |
 
@@ -91,9 +95,17 @@ This project is intended to reinforce the following Spring Security concepts:
 
 ```text
 src/main/java/com/bezkoder/springjwt
+├── config
+│   └── OpenApiConfig.java
 ├── controllers
 │   ├── AuthController.java
 │   └── TestController.java
+├── exception
+│   ├── ApiErrorResponse.java
+│   ├── EmailAlreadyExistsException.java
+│   ├── GlobalExceptionHandler.java
+│   ├── RoleNotFoundException.java
+│   └── UsernameAlreadyExistsException.java
 ├── models
 │   ├── ERole.java
 │   ├── RefreshToken.java
@@ -120,6 +132,7 @@ src/main/java/com/bezkoder/springjwt
     │   ├── AuthTokenFilter.java
     │   └── JwtUtils.java
     └── services
+│       ├── AuthService.java
 │       ├── RefreshTokenException.java
 │       ├── RefreshTokenService.java
 │       ├── UserDetailsImpl.java
@@ -562,6 +575,64 @@ Role checks are applied using expressions such as:
 
 ---
 
+## OpenAPI / Swagger UI
+
+Interactive API documentation is available through springdoc-openapi:
+
+```text
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/v3/api-docs
+```
+
+Swagger UI includes a JWT bearer security scheme. For protected endpoints, use the **Authorize** button and enter the access token. The UI sends it as:
+
+```http
+Authorization: Bearer <access-token>
+```
+
+Authentication, refresh-token, logout and authorization-test endpoints are documented with operation summaries and expected HTTP responses.
+
+---
+
+## Standard Error Response
+
+Milestone 4 introduces a shared error contract for controller and Spring Security failures.
+
+Example validation response:
+
+```json
+{
+  "timestamp": "2026-09-19T12:00:00Z",
+  "status": 400,
+  "error": "Bad Request",
+  "code": "VALIDATION_ERROR",
+  "message": "Validation failed.",
+  "path": "/api/auth/signup",
+  "fieldErrors": {
+    "email": "Email must be valid."
+  }
+}
+```
+
+Representative error codes include:
+
+```text
+VALIDATION_ERROR
+MALFORMED_REQUEST
+INVALID_CREDENTIALS
+USERNAME_ALREADY_EXISTS
+EMAIL_ALREADY_EXISTS
+ROLE_NOT_FOUND
+REFRESH_TOKEN_INVALID
+UNAUTHORIZED
+ACCESS_DENIED
+INTERNAL_SERVER_ERROR
+```
+
+Controller exceptions are handled by `GlobalExceptionHandler`, while security-filter failures continue through `AuthEntryPointJwt` and `AuthAccessDeniedHandler`. All three now return the same `ApiErrorResponse` shape.
+
+---
+
 ## Password Security
 
 Passwords are never stored as plain text by the application.
@@ -726,6 +797,29 @@ B revoked
 
 ---
 
+### ✅ Milestone 4 — OpenAPI + Global Exception Handling
+
+Milestone 4 standardizes API documentation and error behavior.
+
+Completed improvements:
+
+- Added `springdoc-openapi-starter-webmvc-ui`
+- Added OpenAPI metadata and JWT bearer authentication scheme
+- Exposed Swagger UI and OpenAPI JSON endpoints
+- Documented authentication and authorization-test endpoints
+- Added a shared `ApiErrorResponse` model
+- Added `GlobalExceptionHandler` with `@RestControllerAdvice`
+- Added field-level Bean Validation errors
+- Added consistent handling for malformed JSON and invalid credentials
+- Added dedicated duplicate username/email exceptions returning `409 Conflict`
+- Added a dedicated role-configuration exception
+- Centralized refresh-token errors as `401 Unauthorized`
+- Unified security-layer `401` and `403` response bodies with the global error contract
+- Added `AuthService` so `AuthController` acts primarily as an HTTP adapter
+- Allowed Swagger/OpenAPI endpoints through the security filter chain
+
+---
+
 ## Current Scope
 
 Implemented in the current project:
@@ -753,11 +847,13 @@ Implemented in the current project:
 - Docker Compose for PostgreSQL and MySQL
 - Flyway versioned schema migrations
 - Hibernate schema validation
+- OpenAPI / Swagger UI
+- Global exception handling
+- Unified API error responses
+- Thin-controller authentication service
 
 Not yet implemented in this project:
 
-- Global exception handling
-- OpenAPI / Swagger
 - Testcontainers
 - Security integration tests
 - Environment-based secret management
@@ -774,7 +870,7 @@ These are intended as future extensions after the core Spring Security and JWT f
 - ✅ **Milestone 1** — Clean and working educational baseline
 - ✅ **Milestone 2** — PostgreSQL + Docker Compose + Flyway migrations
 - ✅ **Milestone 3** — Refresh Token + logout + revocation
-- ⏳ **Milestone 4** — OpenAPI + global exception handling
+- ✅ **Milestone 4** — OpenAPI + global exception handling
 - ⏳ **Milestone 5** — Security unit/integration tests + Testcontainers
 - ⏳ **Milestone 6** — Secrets + JWT key management + audit logging
 - ⏳ **Milestone 7** — Rate limiting + production hardening
