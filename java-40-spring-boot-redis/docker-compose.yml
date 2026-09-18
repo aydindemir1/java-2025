@@ -1,0 +1,55 @@
+services:
+  redis:
+    image: redis:8.2-alpine
+    container_name: java40-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --maxmemory
+      - 256mb
+      - --maxmemory-policy
+      - allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: java40-redisinsight
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight_data:/data
+
+  app:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: java40-redis-app
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8091:8091"
+
+volumes:
+  redis_data:
+  redisinsight_data:

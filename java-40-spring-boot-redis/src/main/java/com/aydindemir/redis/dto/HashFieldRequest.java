@@ -1,0 +1,1 @@
+package com.aydindemir.redis.dto; import jakarta.validation.constraints.NotBlank; public record HashFieldRequest(@NotBlank String key,@NotBlank String field,@NotBlank String value) {}

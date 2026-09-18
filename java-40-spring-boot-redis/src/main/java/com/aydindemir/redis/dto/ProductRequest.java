@@ -1,0 +1,1 @@
+package com.aydindemir.redis.dto; import java.math.BigDecimal; import jakarta.validation.constraints.*; public record ProductRequest(@NotNull Long id,@NotBlank String name,@NotNull @Positive BigDecimal price) {}

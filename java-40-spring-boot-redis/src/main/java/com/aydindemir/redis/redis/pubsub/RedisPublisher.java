@@ -1,0 +1,2 @@
+package com.aydindemir.redis.redis.pubsub; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Service; import com.aydindemir.redis.config.PubSubConfig;
+@Service public class RedisPublisher { private final StringRedisTemplate redis; public RedisPublisher(StringRedisTemplate r){redis=r;} public Long publish(String m){return redis.convertAndSend(PubSubConfig.DEMO_CHANNEL,m);} }

@@ -1,0 +1,2 @@
+package com.aydindemir.redis; import static org.assertj.core.api.Assertions.assertThat; import org.junit.jupiter.api.Test; import com.aydindemir.redis.config.RedisLearningProperties; import com.aydindemir.redis.redis.cache.KeyNamingService;
+class KeyNamingServiceTest { @Test void buildsConsistentKey(){RedisLearningProperties p=new RedisLearningProperties();p.setKeyPrefix("java40");assertThat(new KeyNamingService(p).key("product","cache",42)).isEqualTo("java40:product:cache:42");} }
