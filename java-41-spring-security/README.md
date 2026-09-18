@@ -1,206 +1,531 @@
-# Spring Boot JWT Authentication example with Spring Security & Spring Data JPA
+# Java 41 — Spring Security & JWT Authentication
 
-## User Registration, User Login and Authorization process.
-The diagram shows flow of how we implement User Registration, User Login and Authorization process.
+A focused Spring Boot learning project that demonstrates **stateless authentication and role-based authorization with Spring Security and JWT**.
 
-![spring-boot-jwt-authentication-spring-security-flow](spring-boot-jwt-authentication-spring-security-flow.png)
+The project covers the complete request flow from user registration and login to JWT generation, JWT validation, Spring Security filter-chain processing, authentication context creation, and role-protected REST endpoints.
 
-## Spring Boot Server Architecture with Spring Security
-You can have an overview of our Spring Boot Server with the diagram below:
+> This project is part of the `java-backend-spring-boot-spring-cloud` learning repository and is based on the Bezkoder Spring Boot JWT authentication example, with additional local setup and security-response improvements.
 
-![spring-boot-jwt-authentication-spring-security-architecture](spring-boot-jwt-authentication-spring-security-architecture.png)
+---
 
-## Dependency
-– If you want to use PostgreSQL:
-```xml
-<dependency>
-  <groupId>org.postgresql</groupId>
-  <artifactId>postgresql</artifactId>
-  <scope>runtime</scope>
-</dependency>
+## Features
+
+- User registration
+- User login
+- JWT access-token generation
+- JWT validation on incoming requests
+- Stateless Spring Security configuration
+- BCrypt password hashing
+- Role-Based Access Control (RBAC)
+- Method-level authorization with `@PreAuthorize`
+- Custom JWT authentication filter
+- Custom `401 Unauthorized` handling
+- Custom `403 Forbidden` handling
+- Spring Data JPA persistence
+- Many-to-Many User–Role relationship
+- Jakarta Bean Validation
+- MySQL database
+- Docker Compose development database
+
+---
+
+## Technology Stack
+
+| Technology | Version / Usage |
+|---|---|
+| Java | 17 |
+| Spring Boot | 3.1.0 |
+| Spring Security | Authentication & authorization |
+| Spring Web | REST API |
+| Spring Data JPA | Persistence |
+| Hibernate | ORM |
+| Jakarta Validation | Request validation |
+| JJWT | 0.11.5 |
+| BCrypt | Password hashing |
+| MySQL | Relational database |
+| Docker Compose | Local MySQL environment |
+| Maven | Build and dependency management |
+
+---
+
+## Core Concepts Practiced
+
+This project is intended to reinforce the following Spring Security concepts:
+
+- Authentication
+- Authorization
+- RBAC
+- `SecurityFilterChain`
+- `AuthenticationManager`
+- `AuthenticationProvider`
+- `DaoAuthenticationProvider`
+- `UserDetails`
+- `UserDetailsService`
+- `SecurityContext`
+- `OncePerRequestFilter`
+- Bearer Token authentication
+- JWT claims and expiration
+- BCrypt password encoding
+- Stateless REST APIs
+- `401 Unauthorized` vs `403 Forbidden`
+- JPA entity relationships
+- Many-to-Many mapping
+
+---
+
+## Project Structure
+
+```text
+src/main/java/com/bezkoder/springjwt
+├── controllers
+│   ├── AuthController.java
+│   └── TestController.java
+├── models
+│   ├── ERole.java
+│   ├── Role.java
+│   └── User.java
+├── payload
+│   ├── request
+│   │   ├── LoginRequest.java
+│   │   └── SignupRequest.java
+│   └── response
+│       ├── JwtResponse.java
+│       └── MessageResponse.java
+├── repository
+│   ├── RoleRepository.java
+│   └── UserRepository.java
+└── security
+    ├── WebSecurityConfig.java
+    ├── jwt
+    │   ├── AuthEntryPointJwt.java
+    │   ├── AuthTokenFilter.java
+    │   └── JwtUtils.java
+    └── services
+        ├── UserDetailsImpl.java
+        └── UserDetailsServiceImpl.java
 ```
-– or MySQL:
-```xml
-<dependency>
-  <groupId>com.mysql</groupId>
-  <artifactId>mysql-connector-j</artifactId>
-  <scope>runtime</scope>
-</dependency>
-```
-## Configure Spring Datasource, JPA, App properties
-Open `src/main/resources/application.properties`
-- For PostgreSQL:
-```
-spring.datasource.url= jdbc:postgresql://localhost:5432/testdb
-spring.datasource.username= postgres
-spring.datasource.password= 123
 
-spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation= true
-spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.PostgreSQLDialect
+---
 
-# Hibernate ddl auto (create, create-drop, validate, update)
-spring.jpa.hibernate.ddl-auto= update
+## Authentication Flow
 
-# App Properties
-bezkoder.app.jwtSecret= bezKoderSecretKey
-bezkoder.app.jwtExpirationMs= 86400000
-```
-- For MySQL
-```
-spring.datasource.url=jdbc:mysql://localhost:3306/testdb_spring?useSSL=false
-spring.datasource.username=root
-spring.datasource.password=123456
+The JWT authentication flow is:
 
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-spring.jpa.hibernate.ddl-auto=update
-
-# App Properties
-bezkoder.app.jwtSecret= ======================BezKoder=Spring===========================
-bezkoder.app.jwtExpirationMs=86400000
-```
-## Run Spring Boot application
-```
-mvn spring-boot:run
+```text
+Client
+  │
+  │ POST /api/auth/signin
+  ▼
+AuthController
+  │
+  ▼
+AuthenticationManager
+  │
+  ▼
+DaoAuthenticationProvider
+  │
+  ├── UserDetailsService
+  └── PasswordEncoder (BCrypt)
+  │
+  ▼
+Authenticated User
+  │
+  ▼
+JwtUtils
+  │
+  ▼
+JWT Access Token
 ```
 
-## Run following SQL insert statements
+For protected requests:
+
+```text
+HTTP Request
+  │
+  │ Authorization: Bearer <JWT>
+  ▼
+Spring Security Filter Chain
+  │
+  ▼
+AuthTokenFilter
+  │
+  ├── Extract JWT
+  ├── Validate JWT
+  ├── Load UserDetails
+  └── Create Authentication
+  │
+  ▼
+SecurityContext
+  │
+  ▼
+@PreAuthorize
+  │
+  ▼
+Controller
 ```
+
+The original architecture diagrams are also included in this project:
+
+![JWT authentication flow](spring-boot-jwt-authentication-spring-security-flow.png)
+
+![Spring Security architecture](spring-boot-jwt-authentication-spring-security-architecture.png)
+
+---
+
+## Roles
+
+The application supports three roles:
+
+```text
+ROLE_USER
+ROLE_MODERATOR
+ROLE_ADMIN
+```
+
+The relationship between users and roles is modeled as **Many-to-Many**.
+
+After the schema has been created, initialize the role table:
+
+```sql
 INSERT INTO roles(name) VALUES('ROLE_USER');
 INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
 INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 ```
 
-For more detail, please visit:
-> [Secure Spring Boot with Spring Security & JWT Authentication](https://bezkoder.com/spring-boot-jwt-authentication/)
+---
 
-> [For MongoDB](https://bezkoder.com/spring-boot-jwt-auth-mongodb/)
+## API Endpoints
 
-## Refresh Token
+### Authentication
 
-![spring-boot-refresh-token-jwt-example-flow](spring-boot-refresh-token-jwt-example-flow.png)
+| Method | Endpoint | Description | Authentication |
+|---|---|---|---|
+| POST | `/api/auth/signup` | Register a new user | Public |
+| POST | `/api/auth/signin` | Authenticate and receive JWT | Public |
 
-For instruction: [Spring Boot Refresh Token with JWT example](https://bezkoder.com/spring-boot-refresh-token-jwt/)
+### Authorization Test Endpoints
 
-## More Practice:
-> [Spring Boot JWT Authentication example using HttpOnly Cookie](https://www.bezkoder.com/spring-boot-login-example-mysql/)
+| Method | Endpoint | Required Role |
+|---|---|---|
+| GET | `/api/test/all` | Public |
+| GET | `/api/test/user` | USER, MODERATOR or ADMIN |
+| GET | `/api/test/mod` | MODERATOR |
+| GET | `/api/test/admin` | ADMIN |
 
-> [Spring Boot File upload example with Multipart File](https://bezkoder.com/spring-boot-file-upload/)
+---
 
-> [Exception handling: @RestControllerAdvice example in Spring Boot](https://bezkoder.com/spring-boot-restcontrolleradvice/)
+## Running the Project
 
-> [Spring Boot Repository Unit Test with @DataJpaTest](https://bezkoder.com/spring-boot-unit-test-jpa-repo-datajpatest/)
+### Prerequisites
 
-> [Spring Boot Pagination & Sorting example](https://www.bezkoder.com/spring-boot-pagination-sorting-example/)
+Make sure the following tools are installed:
 
-> Validation: [Spring Boot Validate Request Body](https://www.bezkoder.com/spring-boot-validate-request-body/)
+- JDK 17+
+- Docker Desktop
+- Maven, or use the included Maven Wrapper
+- Postman or another REST client
 
-> Documentation: [Spring Boot and Swagger 3 example](https://www.bezkoder.com/spring-boot-swagger-3/)
+### 1. Start MySQL
 
-> Caching: [Spring Boot Redis Cache example](https://www.bezkoder.com/spring-boot-redis-cache-example/)
+From the project directory:
 
-Associations:
-> [Spring Boot One To Many example with Spring JPA, Hibernate](https://www.bezkoder.com/jpa-one-to-many/)
+```bash
+docker compose up -d
+```
 
-> [Spring Boot Many To Many example with Spring JPA, Hibernate](https://www.bezkoder.com/jpa-many-to-many/)
+The provided Compose file starts a MySQL 8.4 development container and exposes MySQL on host port `3307`.
 
-> [JPA One To One example with Spring Boot](https://www.bezkoder.com/jpa-one-to-one/)
+Check the container:
 
-Deployment:
-> [Deploy Spring Boot App on AWS – Elastic Beanstalk](https://www.bezkoder.com/deploy-spring-boot-aws-eb/)
+```bash
+docker compose ps
+```
 
-> [Docker Compose Spring Boot and MySQL example](https://www.bezkoder.com/docker-compose-spring-boot-mysql/)
+### 2. Start the Spring Boot application
 
-## Fullstack Authentication
+Windows:
 
-> [Spring Boot + Vue.js JWT Authentication](https://bezkoder.com/spring-boot-vue-js-authentication-jwt-spring-security/)
+```bash
+mvnw.cmd spring-boot:run
+```
 
-> [Spring Boot + Angular 8 JWT Authentication](https://bezkoder.com/angular-spring-boot-jwt-auth/)
+Linux/macOS:
 
-> [Spring Boot + Angular 10 JWT Authentication](https://bezkoder.com/angular-10-spring-boot-jwt-auth/)
+```bash
+./mvnw spring-boot:run
+```
 
-> [Spring Boot + Angular 11 JWT Authentication](https://bezkoder.com/angular-11-spring-boot-jwt-auth/)
+The API runs by default at:
 
-> [Spring Boot + Angular 12 JWT Authentication](https://www.bezkoder.com/angular-12-spring-boot-jwt-auth/)
+```text
+http://localhost:8080
+```
 
-> [Spring Boot + Angular 13 JWT Authentication](https://www.bezkoder.com/angular-13-spring-boot-jwt-auth/)
+### 3. Initialize roles
 
-> [Spring Boot + Angular 14 JWT Authentication](https://www.bezkoder.com/angular-14-spring-boot-jwt-auth/)
+Once Hibernate creates the tables, execute:
 
-> [Spring Boot + Angular 15 JWT Authentication](https://www.bezkoder.com/angular-15-spring-boot-jwt-auth/)
+```sql
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+```
 
-> [Spring Boot + Angular 16 JWT Authentication](https://www.bezkoder.com/angular-16-spring-boot-jwt-auth/)
+---
 
-> [Spring Boot + Angular 17 JWT Authentication](https://www.bezkoder.com/angular-17-spring-boot-jwt-auth/)
+## Example Requests
 
-> [Spring Boot + React JWT Authentication](https://bezkoder.com/spring-boot-react-jwt-auth/)
+### Register a USER
 
-## Fullstack CRUD App
+```http
+POST /api/auth/signup
+Content-Type: application/json
+```
 
-> [Vue.js + Spring Boot + H2 Embedded database example](https://www.bezkoder.com/spring-boot-vue-js-crud-example/)
+```json
+{
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "StrongPassword123!",
+  "role": ["user"]
+}
+```
 
-> [Vue.js + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-vue-js-mysql/)
+Supported registration role values:
 
-> [Vue.js + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-vue-js-postgresql/)
+```text
+user
+mod
+admin
+```
 
-> [Angular 8 + Spring Boot + Embedded database example](https://www.bezkoder.com/angular-spring-boot-crud/)
+If the role field is omitted, the application assigns `ROLE_USER`.
 
-> [Angular 8 + Spring Boot + MySQL example](https://bezkoder.com/angular-spring-boot-crud/)
+### Sign in
 
-> [Angular 8 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-spring-boot-postgresql/)
+```http
+POST /api/auth/signin
+Content-Type: application/json
+```
 
-> [Angular 10 + Spring Boot + MySQL example](https://bezkoder.com/angular-10-spring-boot-crud/)
+```json
+{
+  "username": "testuser",
+  "password": "StrongPassword123!"
+}
+```
 
-> [Angular 10 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-10-spring-boot-postgresql/)
+A successful login returns a JWT access token together with user information and granted roles.
 
-> [Angular 11 + Spring Boot + MySQL example](https://bezkoder.com/angular-11-spring-boot-crud/)
+### Call a protected endpoint
 
-> [Angular 11 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-11-spring-boot-postgresql/)
+```http
+GET /api/test/user
+Authorization: Bearer <JWT_TOKEN>
+```
 
-> [Angular 12 + Spring Boot + Embedded database example](https://www.bezkoder.com/angular-12-spring-boot-crud/)
+---
 
-> [Angular 12 + Spring Boot + MySQL example](https://www.bezkoder.com/angular-12-spring-boot-mysql/)
+## 401 vs 403
 
-> [Angular 12 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/angular-12-spring-boot-postgresql/)
+The project explicitly distinguishes authentication and authorization failures.
 
-> [Angular 13 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-13-crud/)
+### 401 Unauthorized
 
-> [Angular 13 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-13-mysql/)
+Returned when authentication cannot be established, for example:
 
-> [Angular 13 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-13-postgresql/)
+- Missing JWT
+- Invalid JWT
+- Malformed JWT
+- Expired JWT
 
-> [Angular 14 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-14-crud/)
+Conceptually:
 
-> [Angular 14 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-14-mysql/)
+```text
+No valid authentication
+        ↓
+AuthenticationEntryPoint
+        ↓
+401 Unauthorized
+```
 
-> [Angular 14 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-14-postgresql/)
+### 403 Forbidden
 
-> [Angular 15 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-15-crud/)
+Returned when the user is authenticated but does not have the role required by the endpoint.
 
-> [Angular 15 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-15-mysql/)
+Example:
 
-> [Angular 15 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-15-postgresql/)
+```text
+ROLE_USER token
+        ↓
+GET /api/test/admin
+        ↓
+Authenticated but not authorized
+        ↓
+AccessDeniedHandler
+        ↓
+403 Forbidden
+```
 
-> [Angular 16 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-16-crud/)
+The project contains an explicit `AccessDeniedHandler` configuration so role failures return `403 Forbidden` rather than being confused with authentication failures.
 
-> [Angular 16 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-16-mysql/)
+---
 
-> [Angular 16 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-16-postgresql/)
+## Authorization Matrix
 
-> [Angular 17 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-17-crud/)
+| Request | Expected Result |
+|---|---|
+| No token → `/api/test/user` | 401 Unauthorized |
+| Invalid token → `/api/test/user` | 401 Unauthorized |
+| Valid USER token → `/api/test/user` | 200 OK |
+| Valid USER token → `/api/test/admin` | 403 Forbidden |
+| Valid MODERATOR token → `/api/test/mod` | 200 OK |
+| Valid ADMIN token → `/api/test/admin` | 200 OK |
 
-> [Angular 17 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-17-mysql/)
+---
 
-> [Angular 17 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-17-postgresql/)
+## Security Configuration
 
-> [React + Spring Boot + MySQL example](https://bezkoder.com/react-spring-boot-crud/)
+The application is configured as a stateless REST API:
 
-> [React + Spring Boot + PostgreSQL example](https://bezkoder.com/spring-boot-react-postgresql/)
+```java
+.sessionManagement(session ->
+    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+)
+```
 
-> [React + Spring Boot + MongoDB example](https://bezkoder.com/react-spring-boot-mongodb/)
+CSRF is disabled for this token-based API, and JWT processing is performed before Spring Security's `UsernamePasswordAuthenticationFilter`.
 
-Run both Back-end & Front-end in one place:
-> [Integrate Angular with Spring Boot Rest API](https://bezkoder.com/integrate-angular-spring-boot/)
+Method-level authorization is enabled with:
 
-> [Integrate React.js with Spring Boot Rest API](https://bezkoder.com/integrate-reactjs-spring-boot/)
+```java
+@EnableMethodSecurity
+```
 
-> [Integrate Vue.js with Spring Boot Rest API](https://bezkoder.com/integrate-vue-spring-boot/)
+Role checks are applied using expressions such as:
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+```
+
+---
+
+## Password Security
+
+Passwords are never stored as plain text by the application.
+
+Spring Security's `BCryptPasswordEncoder` is used:
+
+```java
+@Bean
+public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+}
+```
+
+During login, the authentication provider compares the submitted password with the BCrypt hash stored in the database.
+
+---
+
+## Configuration and Secrets
+
+The current project is a learning implementation. For production-style configuration, database credentials and JWT signing keys should **not** be committed directly to source control.
+
+Prefer environment variables or an external secrets-management solution, for example:
+
+```properties
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+
+bezkoder.app.jwtSecret=${JWT_SECRET}
+bezkoder.app.jwtExpirationMs=${JWT_EXPIRATION_MS:86400000}
+```
+
+For real-world systems, use a sufficiently strong signing key and manage secret rotation appropriately.
+
+---
+
+## Current Scope
+
+Implemented in the current project:
+
+- Spring Security authentication
+- JWT access token
+- Role-based authorization
+- BCrypt
+- UserDetails / UserDetailsService
+- AuthenticationManager / AuthenticationProvider
+- SecurityFilterChain
+- OncePerRequestFilter
+- SecurityContext
+- JPA
+- Many-to-Many User–Role mapping
+- Validation
+- 401 / 403 handling
+- Stateless API
+- Dockerized MySQL development database
+
+Not yet implemented in this project:
+
+- Refresh Token
+- Logout / token revocation
+- Global exception handling
+- OpenAPI / Swagger
+- Flyway or Liquibase
+- Testcontainers
+- Security integration tests
+- Environment-based secret management
+- Stronger JWT key-management strategy
+- Audit logging
+- Rate limiting
+
+These are intended as future extensions after the core Spring Security and JWT flow is fully understood.
+
+---
+
+## Planned Enhancements
+
+The next learning milestones are:
+
+1. Refresh Token lifecycle
+2. Logout and token revocation strategy
+3. Global exception handling
+4. OpenAPI / Swagger documentation
+5. PostgreSQL Docker environment
+6. Flyway or Liquibase migrations
+7. Testcontainers
+8. Spring Security integration tests
+9. Environment variables and secret management
+10. Stronger JWT signing-key management
+11. Audit logging
+12. Rate limiting
+
+---
+
+## Reference
+
+This learning project is based on the following Bezkoder example:
+
+- **Bezkoder — Spring Boot JWT Authentication with Spring Security & Spring Data JPA**
+- Source repository: `bezkoder/spring-boot-spring-security-jwt-authentication`
+
+The code has been used as a learning baseline and extended locally to practice Spring Security behavior, Docker-based database setup, and explicit `401 Unauthorized` / `403 Forbidden` handling.
+
+---
+
+## Learning Objective
+
+The goal of this project is not only to make JWT authentication work, but to understand **how Spring Security processes an HTTP request internally**:
+
+```text
+Request
+  → Security Filter Chain
+  → JWT Filter
+  → UserDetailsService
+  → Authentication
+  → SecurityContext
+  → Authorization
+  → Controller
+```
+
+This provides the foundation for building more advanced authentication and authorization architectures in later Spring Boot and Spring Cloud projects.
