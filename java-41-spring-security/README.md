@@ -77,6 +77,8 @@ This project is intended to reinforce the following Spring Security concepts:
 
 ```text
 src/main/java/com/bezkoder/springjwt
+├── config
+│   └── RoleDataInitializer.java
 ├── controllers
 │   ├── AuthController.java
 │   └── TestController.java
@@ -97,6 +99,7 @@ src/main/java/com/bezkoder/springjwt
 └── security
     ├── WebSecurityConfig.java
     ├── jwt
+    │   ├── AuthAccessDeniedHandler.java
     │   ├── AuthEntryPointJwt.java
     │   ├── AuthTokenFilter.java
     │   └── JwtUtils.java
@@ -184,13 +187,15 @@ ROLE_ADMIN
 
 The relationship between users and roles is modeled as **Many-to-Many**.
 
-After the schema has been created, initialize the role table:
+The three base roles are initialized automatically at application startup by `RoleDataInitializer`. The initializer is idempotent, so missing roles are inserted without duplicating existing records.
 
-```sql
-INSERT INTO roles(name) VALUES('ROLE_USER');
-INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
-INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+```text
+ROLE_USER
+ROLE_MODERATOR
+ROLE_ADMIN
 ```
+
+Manual SQL inserts are therefore no longer required in Milestone 1.
 
 ---
 
@@ -261,15 +266,9 @@ The API runs by default at:
 http://localhost:8080
 ```
 
-### 3. Initialize roles
+### 3. Role initialization
 
-Once Hibernate creates the tables, execute:
-
-```sql
-INSERT INTO roles(name) VALUES('ROLE_USER');
-INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
-INSERT INTO roles(name) VALUES('ROLE_ADMIN');
-```
+No manual role seed script is required. On startup, `RoleDataInitializer` checks the `roles` table and inserts any missing values from `ERole`.
 
 ---
 
@@ -445,6 +444,46 @@ For real-world systems, use a sufficiently strong signing key and manage secret 
 
 ---
 
+## Milestone Status
+
+### ✅ Milestone 1 — Clean and Working Security Baseline
+
+Milestone 1 refactors the original educational implementation without changing its core authentication model.
+
+Completed improvements:
+
+- Replaced field injection with constructor injection across security and authentication components
+- Removed obsolete and commented-out Spring Security configuration
+- Extracted `403 Forbidden` handling into `AuthAccessDeniedHandler`
+- Kept `401 Unauthorized` handling isolated in `AuthEntryPointJwt`
+- Reused Spring's managed `ObjectMapper` for security error responses
+- Restricted URL-level public access to `/api/auth/**` and `/api/test/all`
+- Kept role authorization at method level with `@PreAuthorize`
+- Cleaned the JWT filter and JWT utility implementation
+- Added `hashCode()` alongside `equals()` in `UserDetailsImpl`
+- Added readable request-validation messages
+- Removed password-policy validation from the persisted BCrypt hash field
+- Corrected `RoleRepository` ID type from `Long` to `Integer`
+- Switched repository existence queries from boxed `Boolean` to primitive `boolean`
+- Added idempotent automatic role initialization
+- Preserved stateless JWT authentication and the existing USER / MODERATOR / ADMIN authorization model
+
+Expected baseline behavior:
+
+| Scenario | Expected |
+|---|---|
+| Signup | 200 OK |
+| Signin | 200 OK + JWT |
+| Public endpoint | 200 OK |
+| Protected endpoint without token | 401 Unauthorized |
+| Protected endpoint with invalid token | 401 Unauthorized |
+| USER → user endpoint | 200 OK |
+| USER → admin endpoint | 403 Forbidden |
+| MODERATOR → moderator endpoint | 200 OK |
+| ADMIN → admin endpoint | 200 OK |
+
+---
+
 ## Current Scope
 
 Implemented in the current project:
@@ -483,22 +522,15 @@ These are intended as future extensions after the core Spring Security and JWT f
 
 ---
 
-## Planned Enhancements
+## Roadmap
 
-The next learning milestones are:
-
-1. Refresh Token lifecycle
-2. Logout and token revocation strategy
-3. Global exception handling
-4. OpenAPI / Swagger documentation
-5. PostgreSQL Docker environment
-6. Flyway or Liquibase migrations
-7. Testcontainers
-8. Spring Security integration tests
-9. Environment variables and secret management
-10. Stronger JWT signing-key management
-11. Audit logging
-12. Rate limiting
+- ✅ **Milestone 1** — Clean and working educational baseline
+- ⏳ **Milestone 2** — PostgreSQL + Docker Compose + database migrations
+- ⏳ **Milestone 3** — Refresh Token + logout + revocation
+- ⏳ **Milestone 4** — OpenAPI + global exception handling
+- ⏳ **Milestone 5** — Security unit/integration tests + Testcontainers
+- ⏳ **Milestone 6** — Secrets + JWT key management + audit logging
+- ⏳ **Milestone 7** — Rate limiting + production hardening
 
 ---
 
