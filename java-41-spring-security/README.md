@@ -37,6 +37,10 @@ The project covers the complete request flow from user registration and login to
 - OpenAPI / Swagger UI documentation
 - Unified global exception handling
 - Standard API error responses
+- Unit tests for authentication, refresh tokens and JWT utilities
+- Spring Security integration tests
+- PostgreSQL Testcontainers integration tests
+- Flyway migration verification against an ephemeral PostgreSQL database
 - Docker Compose development databases
 
 ---
@@ -58,6 +62,9 @@ The project covers the complete request flow from user registration and login to
 | MySQL | Alternative relational database |
 | Flyway | Versioned schema migrations |
 | springdoc-openapi | OpenAPI 3 + Swagger UI |
+| JUnit 5 / Mockito | Unit testing |
+| MockMvc / Spring Security Test | HTTP & security integration testing |
+| Testcontainers | Ephemeral PostgreSQL integration database |
 | Docker Compose | Local PostgreSQL/MySQL environments |
 | Maven | Build and dependency management |
 
@@ -633,6 +640,96 @@ Controller exceptions are handled by `GlobalExceptionHandler`, while security-fi
 
 ---
 
+## Testing
+
+Milestone 5 introduces layered automated tests.
+
+### Unit tests
+
+Fast tests run without a Spring application context or real database:
+
+```text
+AuthServiceTest
+RefreshTokenServiceTest
+JwtUtilsTest
+```
+
+They cover core business rules such as duplicate-user detection, default role assignment, refresh-token rejection/reuse handling, and JWT generation/validation.
+
+### Security and API integration tests
+
+Integration tests boot the real Spring application with `MockMvc` and exercise the actual security filter chain:
+
+```text
+AuthenticationIntegrationTest
+AuthorizationIntegrationTest
+RefreshTokenIntegrationTest
+OpenApiIntegrationTest
+```
+
+Representative scenarios include:
+
+```text
+public endpoint without token       -> 200
+protected endpoint without token    -> 401
+invalid JWT                         -> 401
+USER -> /api/test/user              -> 200
+USER -> /api/test/admin             -> 403
+ADMIN -> /api/test/admin            -> 200
+duplicate signup                    -> 409
+invalid signup payload              -> 400 + fieldErrors
+signin                              -> access + refresh token
+refresh rotation                    -> new token pair
+old rotated token reuse             -> 401 + session revocation
+logout                              -> 204
+logout-all                          -> all refresh sessions revoked
+OpenAPI JSON                        -> 200
+```
+
+### PostgreSQL Testcontainers
+
+Integration tests start an ephemeral `postgres:17` container automatically. The test datasource is injected dynamically, so tests do not depend on your local PostgreSQL or MySQL installation.
+
+Test startup verifies the real database lifecycle:
+
+```text
+PostgreSQL Testcontainer
+        ↓
+Flyway V1 / V2 / V3
+        ↓
+Hibernate ddl-auto=validate
+        ↓
+Spring Security application context
+        ↓
+MockMvc integration tests
+```
+
+The PostgreSQL container is kept alive for the full test JVM so the cached Spring context remains connected to the same database across integration test classes.
+
+### Run all tests
+
+Docker Desktop must be running because the integration suite uses Testcontainers.
+
+Windows:
+
+```bash
+mvnw.cmd test
+```
+
+Linux/macOS:
+
+```bash
+./mvnw test
+```
+
+The test profile is configured in:
+
+```text
+src/test/resources/application-test.properties
+```
+
+---
+
 ## Password Security
 
 Passwords are never stored as plain text by the application.
@@ -820,6 +917,29 @@ Completed improvements:
 
 ---
 
+### ✅ Milestone 5 — Security Tests + Testcontainers
+
+Milestone 5 adds automated verification across the service, security, API and persistence layers.
+
+Completed improvements:
+
+- Added JUnit/Mockito unit tests for `AuthService`
+- Added refresh-token service unit tests
+- Added JWT utility unit tests
+- Added PostgreSQL Testcontainers dependencies
+- Added a shared PostgreSQL integration-test support class
+- Added a dedicated `test` Spring profile
+- Added authentication integration tests
+- Added authorization and 401/403 integration tests
+- Added refresh-token rotation, reuse, logout and logout-all integration tests
+- Added OpenAPI smoke tests
+- Runs Flyway migrations against a fresh PostgreSQL database during integration testing
+- Keeps Hibernate in `ddl-auto=validate` mode during tests
+- Added database cleanup between integration test methods while preserving seeded roles
+- Added explicit global handling for method-security `AccessDeniedException` so role failures consistently remain `403 Forbidden`
+
+---
+
 ## Current Scope
 
 Implemented in the current project:
@@ -851,11 +971,13 @@ Implemented in the current project:
 - Global exception handling
 - Unified API error responses
 - Thin-controller authentication service
+- JUnit/Mockito unit tests
+- MockMvc security integration tests
+- PostgreSQL Testcontainers
+- Flyway migration integration verification
 
 Not yet implemented in this project:
 
-- Testcontainers
-- Security integration tests
 - Environment-based secret management
 - Stronger JWT key-management strategy
 - Audit logging
@@ -871,7 +993,7 @@ These are intended as future extensions after the core Spring Security and JWT f
 - ✅ **Milestone 2** — PostgreSQL + Docker Compose + Flyway migrations
 - ✅ **Milestone 3** — Refresh Token + logout + revocation
 - ✅ **Milestone 4** — OpenAPI + global exception handling
-- ⏳ **Milestone 5** — Security unit/integration tests + Testcontainers
+- ✅ **Milestone 5** — Security unit/integration tests + Testcontainers
 - ⏳ **Milestone 6** — Secrets + JWT key management + audit logging
 - ⏳ **Milestone 7** — Rate limiting + production hardening
 
