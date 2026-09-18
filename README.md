@@ -16,6 +16,10 @@ Repository içerisinde Java, nesne yönelimli programlama, koleksiyonlar, Stream
 * Spring Data JPA
 * Hibernate
 * Spring Data MongoDB
+* Spring Data Redis
+* Spring Cache
+* Redis
+* Lettuce
 * MySQL
 * PostgreSQL
 * H2 Database
@@ -23,12 +27,16 @@ Repository içerisinde Java, nesne yönelimli programlama, koleksiyonlar, Stream
 * Jakarta Validation
 * Swagger / OpenAPI
 * Spring Boot Actuator
+* SLF4J
+* Logback
 * Docker
 * Docker Compose
+* RedisInsight
 * JUnit 5
 * Mockito
 * MockMvc
 * AssertJ
+* Testcontainers
 * React
 * Angular
 * Vue
@@ -79,6 +87,14 @@ Spring Boot + MongoDB CRUD REST API ile React, Angular ve Vue frontend uygulamal
 
 JUnit 5, Mockito, `@WebMvcTest`, MockMvc, `@DataJpaTest`, H2 ve AssertJ kullanılarak Spring Boot test örneklerini içerir.
 
+`java-39-spring-boot-logging`
+
+SLF4J ve Logback kullanılarak log seviyeleri, console logging, file logging ve exception logging örneklerini içerir.
+
+`java-40-spring-boot-redis`
+
+Spring Data Redis ve Spring Cache ile Redis veri yapıları, TTL, cache-aside, Pub/Sub, Streams, transaction, distributed lock, rate limiting, idempotency, Testcontainers ve Docker tabanlı Redis/RedisInsight kullanım örneklerini içerir.
+
 ## Backend Mimarisi
 
 ```text
@@ -111,10 +127,16 @@ Database
 * MongoDB
 * DTO ve Validation
 * Global Exception Handling
+* Logging (SLF4J / Logback)
+* Redis ve Spring Data Redis
+* Cache yönetimi ve TTL
+* Redis Pub/Sub ve Streams
+* Distributed Lock ve Rate Limiting
 * Docker ve Docker Compose
 * Unit Test
 * Web MVC Test
 * Repository Test
+* Testcontainers
 * Full Stack REST API entegrasyonu
 
 ## Amaç
