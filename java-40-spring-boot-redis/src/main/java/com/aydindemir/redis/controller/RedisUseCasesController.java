@@ -1,7 +1,83 @@
-package com.aydindemir.redis.controller; import java.util.Map; import org.springframework.web.bind.annotation.*; import com.aydindemir.redis.service.*; import io.swagger.v3.oas.annotations.tags.Tag;
-@RestController @RequestMapping("/api/use-cases") @Tag(name="04 - Real Redis Use Cases") public class RedisUseCasesController { private final TemporarySessionService sessions; private final CounterService counters; private final LeaderboardService board; private final RecentItemsService recent; private final UniqueUsersService unique; public RedisUseCasesController(TemporarySessionService a,CounterService b,LeaderboardService c,RecentItemsService d,UniqueUsersService e){sessions=a;counters=b;board=c;recent=d;unique=e;}
- @PostMapping("/sessions/{sid}/{uid}") public Object cs(@PathVariable String sid,@PathVariable String uid){return sessions.create(sid,uid);} @GetMapping("/sessions/{sid}") public Object gs(@PathVariable String sid){return sessions.get(sid).orElse(null);} 
- @PostMapping("/counters/{name}/increment") public Map<String,Long> inc(@PathVariable String name){return Map.of("value",counters.increment(name));}
- @PostMapping("/leaderboard/{board}/{userId}") public void score(@PathVariable String board,@PathVariable String userId,@RequestParam double score){this.board.addScore(board,userId,score);} @GetMapping("/leaderboard/{board}") public Object top(@PathVariable String board,@RequestParam(defaultValue="10") long count){return this.board.top(board,count);} 
- @PostMapping("/recent/{userId}/{itemId}") public void recent(@PathVariable String userId,@PathVariable String itemId){recent.add(userId,itemId);} @GetMapping("/recent/{userId}") public Object recent(@PathVariable String userId){return recent.get(userId);} 
- @PostMapping("/unique-users/{period}/{userId}") public void unique(@PathVariable String period,@PathVariable String userId){unique.record(period,userId);} @GetMapping("/unique-users/{period}/count") public Map<String,Long> uniqueCount(@PathVariable String period){return Map.of("count",unique.count(period));} }
+package com.aydindemir.redis.controller;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.aydindemir.redis.service.CounterService;
+import com.aydindemir.redis.service.LeaderboardService;
+import com.aydindemir.redis.service.RecentItemsService;
+import com.aydindemir.redis.service.TemporarySessionService;
+import com.aydindemir.redis.service.UniqueUsersService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@RestController
+@RequestMapping("/api/use-cases")
+@Tag(name = "04 - Real Redis Use Cases")
+public class RedisUseCasesController {
+	private final TemporarySessionService sessions;
+	private final CounterService counters;
+	private final LeaderboardService board;
+	private final RecentItemsService recent;
+	private final UniqueUsersService unique;
+
+	public RedisUseCasesController(TemporarySessionService a, CounterService b, LeaderboardService c,
+			RecentItemsService d, UniqueUsersService e) {
+		sessions = a;
+		counters = b;
+		board = c;
+		recent = d;
+		unique = e;
+	}
+
+	@PostMapping("/sessions/{sid}/{uid}")
+	public Object cs(@PathVariable String sid, @PathVariable String uid) {
+		return sessions.create(sid, uid);
+	}
+
+	@GetMapping("/sessions/{sid}")
+	public Object gs(@PathVariable String sid) {
+		return sessions.get(sid).orElse(null);
+	}
+
+	@PostMapping("/counters/{name}/increment")
+	public Map<String, Long> inc(@PathVariable String name) {
+		return Map.of("value", counters.increment(name));
+	}
+
+	@PostMapping("/leaderboard/{board}/{userId}")
+	public void score(@PathVariable String board, @PathVariable String userId, @RequestParam double score) {
+		this.board.addScore(board, userId, score);
+	}
+
+	@GetMapping("/leaderboard/{board}")
+	public Object top(@PathVariable String board, @RequestParam(defaultValue = "10") long count) {
+		return this.board.top(board, count);
+	}
+
+	@PostMapping("/recent/{userId}/{itemId}")
+	public void recent(@PathVariable String userId, @PathVariable String itemId) {
+		recent.add(userId, itemId);
+	}
+
+	@GetMapping("/recent/{userId}")
+	public Object recent(@PathVariable String userId) {
+		return recent.get(userId);
+	}
+
+	@PostMapping("/unique-users/{period}/{userId}")
+	public void unique(@PathVariable String period, @PathVariable String userId) {
+		unique.record(period, userId);
+	}
+
+	@GetMapping("/unique-users/{period}/count")
+	public Map<String, Long> uniqueCount(@PathVariable String period) {
+		return Map.of("count", unique.count(period));
+	}
+}

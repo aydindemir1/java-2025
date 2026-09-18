@@ -1,1 +1,8 @@
-package com.aydindemir.redis.dto; import java.util.Map; import jakarta.validation.constraints.NotEmpty; public record StreamMessageRequest(@NotEmpty Map<String,String> fields) {}
+package com.aydindemir.redis.dto;
+
+import java.util.Map;
+
+import jakarta.validation.constraints.NotEmpty;
+
+public record StreamMessageRequest(@NotEmpty Map<String, String> fields) {
+}

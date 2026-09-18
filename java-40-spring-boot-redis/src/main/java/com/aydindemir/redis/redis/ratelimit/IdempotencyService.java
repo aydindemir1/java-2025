@@ -1,2 +1,19 @@
-package com.aydindemir.redis.redis.ratelimit; import java.time.Duration; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Service;
-@Service public class IdempotencyService { private final StringRedisTemplate redis; public IdempotencyService(StringRedisTemplate r){redis=r;} public boolean register(String key,Duration ttl){return Boolean.TRUE.equals(redis.opsForValue().setIfAbsent(key,"processed",ttl));} }
+package com.aydindemir.redis.redis.ratelimit;
+
+import java.time.Duration;
+
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class IdempotencyService {
+	private final StringRedisTemplate redis;
+
+	public IdempotencyService(StringRedisTemplate r) {
+		redis = r;
+	}
+
+	public boolean register(String key, Duration ttl) {
+		return Boolean.TRUE.equals(redis.opsForValue().setIfAbsent(key, "processed", ttl));
+	}
+}

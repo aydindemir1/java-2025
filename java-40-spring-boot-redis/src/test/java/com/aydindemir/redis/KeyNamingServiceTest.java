@@ -9,17 +9,16 @@ import com.aydindemir.redis.redis.cache.KeyNamingService;
 
 class KeyNamingServiceTest {
 
-    @Test
-    void buildsConsistentKey() {
+	@Test
+	void buildsConsistentKey() {
 
-        RedisLearningProperties properties = new RedisLearningProperties();
-        properties.setKeyPrefix("java40");
+		RedisLearningProperties properties = new RedisLearningProperties();
+		properties.setKeyPrefix("java40");
 
-        KeyNamingService service = new KeyNamingService(properties);
+		KeyNamingService service = new KeyNamingService(properties);
 
-        String key = service.key("product", "cache", 42);
+		String key = service.key("product", "cache", 42);
 
-        assertThat(key)
-                .isEqualTo("java40:product:cache:42");
-    }
+		assertThat(key).isEqualTo("java40:product:cache:42");
+	}
 }
