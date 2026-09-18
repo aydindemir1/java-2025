@@ -978,12 +978,6 @@ Implemented in the current project:
 
 Not yet implemented in this project:
 
-- Environment-based secret management
-- Stronger JWT key-management strategy
-- Audit logging
-- Rate limiting
-
-These are intended as future extensions after the core Spring Security and JWT flow is fully understood.
 
 ---
 
@@ -994,8 +988,6 @@ These are intended as future extensions after the core Spring Security and JWT f
 - ✅ **Milestone 3** — Refresh Token + logout + revocation
 - ✅ **Milestone 4** — OpenAPI + global exception handling
 - ✅ **Milestone 5** — Security unit/integration tests + Testcontainers
-- ⏳ **Milestone 6** — Secrets + JWT key management + audit logging
-- ⏳ **Milestone 7** — Rate limiting + production hardening
 
 ---
 
