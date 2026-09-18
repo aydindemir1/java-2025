@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -123,6 +125,32 @@ public class GlobalExceptionHandler {
         HttpStatus.UNAUTHORIZED,
         "INVALID_CREDENTIALS",
         "Username or password is invalid.",
+        request,
+        null);
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<ApiErrorResponse> handleAuthentication(
+      AuthenticationException exception,
+      HttpServletRequest request) {
+
+    return build(
+        HttpStatus.UNAUTHORIZED,
+        "UNAUTHORIZED",
+        "Authentication is required to access this resource.",
+        request,
+        null);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+      AccessDeniedException exception,
+      HttpServletRequest request) {
+
+    return build(
+        HttpStatus.FORBIDDEN,
+        "ACCESS_DENIED",
+        "You do not have permission to access this resource.",
         request,
         null);
   }
