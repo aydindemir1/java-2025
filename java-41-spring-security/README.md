@@ -24,8 +24,10 @@ The project covers the complete request flow from user registration and login to
 - Spring Data JPA persistence
 - Many-to-Many User–Role relationship
 - Jakarta Bean Validation
-- MySQL database
-- Docker Compose development database
+- PostgreSQL database (active)
+- MySQL database (alternative)
+- Flyway database migrations
+- Docker Compose development databases
 
 ---
 
@@ -42,8 +44,10 @@ The project covers the complete request flow from user registration and login to
 | Jakarta Validation | Request validation |
 | JJWT | 0.11.5 |
 | BCrypt | Password hashing |
-| MySQL | Relational database |
-| Docker Compose | Local MySQL environment |
+| PostgreSQL | Primary relational database |
+| MySQL | Alternative relational database |
+| Flyway | Versioned schema migrations |
+| Docker Compose | Local PostgreSQL/MySQL environments |
 | Maven | Build and dependency management |
 
 ---
@@ -77,8 +81,6 @@ This project is intended to reinforce the following Spring Security concepts:
 
 ```text
 src/main/java/com/bezkoder/springjwt
-├── config
-│   └── RoleDataInitializer.java
 ├── controllers
 │   ├── AuthController.java
 │   └── TestController.java
@@ -96,16 +98,25 @@ src/main/java/com/bezkoder/springjwt
 ├── repository
 │   ├── RoleRepository.java
 │   └── UserRepository.java
-└── security
-    ├── WebSecurityConfig.java
+├── security
+│   ├── WebSecurityConfig.java
     ├── jwt
     │   ├── AuthAccessDeniedHandler.java
     │   ├── AuthEntryPointJwt.java
     │   ├── AuthTokenFilter.java
     │   └── JwtUtils.java
     └── services
-        ├── UserDetailsImpl.java
-        └── UserDetailsServiceImpl.java
+│       ├── UserDetailsImpl.java
+│       └── UserDetailsServiceImpl.java
+└── resources
+    ├── application.properties
+    └── db/migration
+        ├── postgresql
+        │   ├── V1__create_security_schema.sql
+        │   └── V2__seed_roles.sql
+        └── mysql
+            ├── V1__create_security_schema.sql
+            └── V2__seed_roles.sql
 ```
 
 ---
@@ -187,7 +198,7 @@ ROLE_ADMIN
 
 The relationship between users and roles is modeled as **Many-to-Many**.
 
-The three base roles are initialized automatically at application startup by `RoleDataInitializer`. The initializer is idempotent, so missing roles are inserted without duplicating existing records.
+Role initialization is now owned by Flyway. `V2__seed_roles.sql` inserts the three base roles as part of database migration:
 
 ```text
 ROLE_USER
@@ -195,7 +206,7 @@ ROLE_MODERATOR
 ROLE_ADMIN
 ```
 
-Manual SQL inserts are therefore no longer required in Milestone 1.
+This removes application-startup seeding logic and keeps schema/data initialization versioned and repeatable.
 
 ---
 
@@ -230,21 +241,29 @@ Make sure the following tools are installed:
 - Maven, or use the included Maven Wrapper
 - Postman or another REST client
 
-### 1. Start MySQL
+### 1. Start PostgreSQL
 
 From the project directory:
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
-The provided Compose file starts a MySQL 8.4 development container and exposes MySQL on host port `3307`.
+The active datasource uses PostgreSQL 17 on host port `5432`.
 
-Check the container:
+Check the container health:
 
 ```bash
 docker compose ps
 ```
+
+To run the alternative MySQL environment instead:
+
+```bash
+docker compose up -d mysql
+```
+
+Then switch the datasource block in `application.properties` from PostgreSQL to the commented MySQL configuration.
 
 ### 2. Start the Spring Boot application
 
@@ -266,9 +285,23 @@ The API runs by default at:
 http://localhost:8080
 ```
 
-### 3. Role initialization
+### 3. Flyway migration
 
-No manual role seed script is required. On startup, `RoleDataInitializer` checks the `roles` table and inserts any missing values from `ERole`.
+No manual schema creation or role insert is required. On startup, Flyway selects migrations using the active database vendor:
+
+```text
+PostgreSQL -> classpath:db/migration/postgresql
+MySQL      -> classpath:db/migration/mysql
+```
+
+Migration order:
+
+```text
+V1__create_security_schema.sql
+V2__seed_roles.sql
+```
+
+Flyway also creates `flyway_schema_history` to track applied migrations. Hibernate uses `ddl-auto=validate`, so Flyway owns schema creation while Hibernate verifies entity/schema compatibility.
 
 ---
 
@@ -484,6 +517,56 @@ Expected baseline behavior:
 
 ---
 
+### ✅ Milestone 2 — PostgreSQL + Docker Compose + Flyway
+
+Milestone 2 moves database lifecycle management out of Hibernate and into versioned migrations.
+
+Completed improvements:
+
+- Added PostgreSQL JDBC driver and kept MySQL JDBC support
+- Added PostgreSQL 17 service to Docker Compose
+- Retained the MySQL service for alternative local testing
+- Added health checks for both database containers
+- Switched the active datasource to PostgreSQL
+- Preserved the MySQL datasource settings as a commented alternative
+- Changed Hibernate from `ddl-auto=update` to `ddl-auto=validate`
+- Added Flyway as the schema migration tool
+- Added vendor-aware migration locations using `classpath:db/migration/{vendor}`
+- Added PostgreSQL migrations for schema creation and role seeding
+- Added equivalent MySQL migrations so the project can also be tested against MySQL
+- Removed `RoleDataInitializer` because role seeding is now owned by Flyway
+- Added primary/unique/foreign-key constraints explicitly in migration SQL
+- Added cascading cleanup for `user_roles` foreign keys
+
+Expected database startup flow:
+
+```text
+Docker database
+    ↓
+Spring Boot datasource
+    ↓
+Flyway
+    ↓
+V1 schema migration
+    ↓
+V2 role seed migration
+    ↓
+Hibernate validate
+    ↓
+Application ready
+```
+
+Expected PostgreSQL tables:
+
+```text
+flyway_schema_history
+roles
+users
+user_roles
+```
+
+---
+
 ## Current Scope
 
 Implemented in the current project:
@@ -502,7 +585,11 @@ Implemented in the current project:
 - Validation
 - 401 / 403 handling
 - Stateless API
-- Dockerized MySQL development database
+- PostgreSQL as the active datasource
+- MySQL retained as an alternative datasource
+- Docker Compose for PostgreSQL and MySQL
+- Flyway versioned schema migrations
+- Hibernate schema validation
 
 Not yet implemented in this project:
 
@@ -510,7 +597,6 @@ Not yet implemented in this project:
 - Logout / token revocation
 - Global exception handling
 - OpenAPI / Swagger
-- Flyway or Liquibase
 - Testcontainers
 - Security integration tests
 - Environment-based secret management
@@ -525,7 +611,7 @@ These are intended as future extensions after the core Spring Security and JWT f
 ## Roadmap
 
 - ✅ **Milestone 1** — Clean and working educational baseline
-- ⏳ **Milestone 2** — PostgreSQL + Docker Compose + database migrations
+- ✅ **Milestone 2** — PostgreSQL + Docker Compose + Flyway migrations
 - ⏳ **Milestone 3** — Refresh Token + logout + revocation
 - ⏳ **Milestone 4** — OpenAPI + global exception handling
 - ⏳ **Milestone 5** — Security unit/integration tests + Testcontainers
