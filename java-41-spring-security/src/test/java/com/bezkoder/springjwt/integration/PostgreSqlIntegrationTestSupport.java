@@ -9,21 +9,21 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public abstract class PostgreSqlIntegrationTestSupport {
 
-  @Container
   static final PostgreSQLContainer<?> POSTGRES =
       new PostgreSQLContainer<>("postgres:17")
           .withDatabaseName("security_test")
           .withUsername("test_user")
           .withPassword("test_password");
+
+  static {
+    POSTGRES.start();
+  }
 
   @DynamicPropertySource
   static void datasourceProperties(DynamicPropertyRegistry registry) {
