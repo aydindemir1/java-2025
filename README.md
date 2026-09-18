@@ -12,9 +12,12 @@ Repository içerisinde Java, nesne yönelimli programlama, koleksiyonlar, Stream
 * RDBMS
 * JDBC
 * Spring Boot
+* Spring Security
 * Spring Web
 * Spring Data JPA
 * Hibernate
+* JWT
+* Flyway
 * Spring Data MongoDB
 * Spring Data Redis
 * Spring Cache
@@ -95,6 +98,10 @@ SLF4J ve Logback kullanılarak log seviyeleri, console logging, file logging ve 
 
 Spring Data Redis ve Spring Cache ile Redis veri yapıları, TTL, cache-aside, Pub/Sub, Streams, transaction, distributed lock, rate limiting, idempotency, Testcontainers ve Docker tabanlı Redis/RedisInsight kullanım örneklerini içerir.
 
+`java-41-spring-security`
+
+Spring Security ve JWT tabanlı kimlik doğrulama/yetkilendirme projesidir. Stateless authentication, RBAC, `SecurityFilterChain`, `UserDetailsService`, BCrypt, kısa ömürlü JWT access token, refresh token rotation/revocation, logout/logout-all, PostgreSQL/MySQL, Flyway migration, OpenAPI/Swagger, global exception handling, JUnit/Mockito, MockMvc ve PostgreSQL Testcontainers entegrasyon testlerini içerir.
+
 ## Backend Mimarisi
 
 ```text
@@ -127,6 +134,12 @@ Database
 * MongoDB
 * DTO ve Validation
 * Global Exception Handling
+* Spring Security
+* Authentication ve Authorization
+* JWT Access Token ve Refresh Token
+* Role-Based Access Control (RBAC)
+* Flyway veritabanı migration yönetimi
+* OpenAPI / Swagger
 * Logging (SLF4J / Logback)
 * Redis ve Spring Data Redis
 * Cache yönetimi ve TTL
@@ -137,6 +150,7 @@ Database
 * Web MVC Test
 * Repository Test
 * Testcontainers
+* Spring Security entegrasyon testleri
 * Full Stack REST API entegrasyonu
 
 ## Amaç
