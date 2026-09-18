@@ -2,22 +2,25 @@ package com.bezkoder.springjwt.payload.request;
 
 import java.util.Set;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class SignupRequest {
-  @NotBlank
-  @Size(min = 3, max = 20)
+
+  @NotBlank(message = "Username is required.")
+  @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters.")
   private String username;
 
-  @NotBlank
-  @Size(max = 50)
-  @Email
+  @NotBlank(message = "Email is required.")
+  @Size(max = 50, message = "Email must not exceed 50 characters.")
+  @Email(message = "Email must be valid.")
   private String email;
 
   private Set<String> role;
 
-  @NotBlank
-  @Size(min = 6, max = 40)
+  @NotBlank(message = "Password is required.")
+  @Size(min = 6, max = 40, message = "Password must be between 6 and 40 characters.")
   private String password;
 
   public String getUsername() {
@@ -36,19 +39,19 @@ public class SignupRequest {
     this.email = email;
   }
 
+  public Set<String> getRole() {
+    return role;
+  }
+
+  public void setRole(Set<String> role) {
+    this.role = role;
+  }
+
   public String getPassword() {
     return password;
   }
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public Set<String> getRole() {
-    return this.role;
-  }
-
-  public void setRole(Set<String> role) {
-    this.role = role;
   }
 }

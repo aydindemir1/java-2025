@@ -3,11 +3,7 @@ package com.bezkoder.springjwt.controllers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import jakarta.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,118 +28,98 @@ import com.bezkoder.springjwt.repository.UserRepository;
 import com.bezkoder.springjwt.security.jwt.JwtUtils;
 import com.bezkoder.springjwt.security.services.UserDetailsImpl;
 
+import jakarta.validation.Valid;
 
-//http://localhost:8080/api/auth
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-  @Autowired
-  AuthenticationManager authenticationManager;
 
-  @Autowired
-  UserRepository userRepository;
+  private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtUtils jwtUtils;
 
-  @Autowired
-  RoleRepository roleRepository;
+  public AuthController(
+      AuthenticationManager authenticationManager,
+      UserRepository userRepository,
+      RoleRepository roleRepository,
+      PasswordEncoder passwordEncoder,
+      JwtUtils jwtUtils) {
+    this.authenticationManager = authenticationManager;
+    this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.jwtUtils = jwtUtils;
+  }
 
-  @Autowired
-  PasswordEncoder encoder;
-
-  @Autowired
-  JwtUtils jwtUtils;
-  
-  
-  
-//http://localhost:8080/api/auth/signup
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-	  
-	  
-	  //   isEmailValid(signUpRequest.getEmail());
-	  
     if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity
-          .badRequest()
+      return ResponseEntity.badRequest()
           .body(new MessageResponse("Error: Username is already taken!"));
     }
 
     if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return ResponseEntity
-          .badRequest()
+      return ResponseEntity.badRequest()
           .body(new MessageResponse("Error: Email is already in use!"));
     }
 
-    // Create new user's account
-    User user = new User(signUpRequest.getUsername(), 
-               signUpRequest.getEmail(),
-               encoder.encode(signUpRequest.getPassword()));
+    User user = new User(
+        signUpRequest.getUsername(),
+        signUpRequest.getEmail(),
+        passwordEncoder.encode(signUpRequest.getPassword()));
 
-    Set<String> strRoles = signUpRequest.getRole();
-    Set<Role> roles = new HashSet<>();
-
-    if (strRoles == null) {
-      Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-          .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-      roles.add(userRole);
-    } else {
-      strRoles.forEach(role -> {
-        switch (role) {
-        case "admin":
-          Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(adminRole);
-
-          break;
-        case "mod":
-          Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(modRole);
-
-          break;
-        default:
-          Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-          roles.add(userRole);
-        }
-      });
-    }
-
-    user.setRoles(roles);
+    user.setRoles(resolveRoles(signUpRequest.getRole()));
     userRepository.save(user);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
-  
-  /*
-  public static boolean isEmailValid(String email) {
-    final Pattern EMAIL_REGEX = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
-    return EMAIL_REGEX.matcher(email).matches();
-  }
-*/
 
-  //http://localhost:8080/api/auth/signin
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
     Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        new UsernamePasswordAuthenticationToken(
+            loginRequest.getUsername(),
+            loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    String jwt = jwtUtils.generateJwtToken(authentication);
-    
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
-    
-    List<String> roles = userDetails.getAuthorities().stream()
-        .map(item -> item.getAuthority())
-        .collect(Collectors.toList());
 
-    return ResponseEntity.ok(new JwtResponse(jwt, 
-                         userDetails.getId(), 
-                         userDetails.getUsername(), 
-                         userDetails.getEmail(), 
-                         roles));
+    String jwt = jwtUtils.generateJwtToken(authentication);
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+    List<String> roles = userDetails.getAuthorities().stream()
+        .map(authority -> authority.getAuthority())
+        .toList();
+
+    return ResponseEntity.ok(new JwtResponse(
+        jwt,
+        userDetails.getId(),
+        userDetails.getUsername(),
+        userDetails.getEmail(),
+        roles));
   }
 
-  
+  private Set<Role> resolveRoles(Set<String> requestedRoles) {
+    Set<Role> roles = new HashSet<>();
+
+    if (requestedRoles == null || requestedRoles.isEmpty()) {
+      roles.add(findRole(ERole.ROLE_USER));
+      return roles;
+    }
+
+    requestedRoles.forEach(role -> roles.add(switch (role) {
+      case "admin" -> findRole(ERole.ROLE_ADMIN);
+      case "mod" -> findRole(ERole.ROLE_MODERATOR);
+      default -> findRole(ERole.ROLE_USER);
+    }));
+
+    return roles;
+  }
+
+  private Role findRole(ERole roleName) {
+    return roleRepository.findByName(roleName)
+        .orElseThrow(() -> new IllegalStateException("Required role is not configured: " + roleName));
+  }
 }
