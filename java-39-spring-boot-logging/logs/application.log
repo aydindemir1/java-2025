@@ -1,0 +1,257 @@
+2026-09-18T15:38:56.835+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 11900 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:38:56.837+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:38:57.907+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:38:57.925+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:38:57.925+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:38:57.971+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1093 ms
+2026-09-18T15:38:58.489+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:38:58.543+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:38:58.549+03:00  INFO 11900 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.224 seconds (process running for 2.68)
+2026-09-18T15:38:59.167+03:00  INFO 11900 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:38:59.168+03:00  INFO 11900 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:38:59.170+03:00  INFO 11900 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-18T15:40:19.763+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 49188 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:40:19.766+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:40:20.710+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:40:20.727+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:40:20.728+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:40:20.779+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 980 ms
+2026-09-18T15:40:21.506+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:40:21.551+03:00  WARN 49188 --- [java-39-spring-boot-logging] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-18T15:40:21.573+03:00  INFO 49188 --- [java-39-spring-boot-logging] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-18T15:40:21.586+03:00 ERROR 49188 --- [java-39-spring-boot-logging] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8090 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8090 or configure this application to listen on another port.
+
+2026-09-18T15:40:28.151+03:00  INFO 11900 --- [java-39-spring-boot-logging] [RMI TCP Connection(7)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:40:28.153+03:00  INFO 11900 --- [java-39-spring-boot-logging] [RMI TCP Connection(7)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:40:28.676+03:00  INFO 11900 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:40:28.676+03:00 ERROR 11900 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:40:43.653+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 99324 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:40:43.655+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:40:44.587+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:40:44.601+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:40:44.601+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:40:44.641+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 948 ms
+2026-09-18T15:40:45.243+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:40:45.293+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:40:45.301+03:00  INFO 99324 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.087 seconds (process running for 2.429)
+2026-09-18T15:41:11.680+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:41:11.681+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:41:11.685+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-09-18T15:41:12.301+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 230 ms
+2026-09-18T15:41:32.108+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : INFO log from PersonController
+2026-09-18T15:41:32.109+03:00  WARN 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : WARN log from PersonController
+2026-09-18T15:41:32.109+03:00  INFO 99324 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : 2 adet person bulundu
+2026-09-18T15:42:10.740+03:00  INFO 99324 --- [java-39-spring-boot-logging] [RMI TCP Connection(6)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:42:10.743+03:00  INFO 99324 --- [java-39-spring-boot-logging] [RMI TCP Connection(6)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:42:11.267+03:00  INFO 99324 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:42:11.268+03:00 ERROR 99324 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:42:27.877+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 99052 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:42:27.883+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:42:28.911+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:42:28.924+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:42:28.926+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:42:28.969+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1027 ms
+2026-09-18T15:42:29.595+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:42:29.651+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:42:29.659+03:00  INFO 99052 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.237 seconds (process running for 2.621)
+2026-09-18T15:42:30.208+03:00  INFO 99052 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:42:30.209+03:00  INFO 99052 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:42:30.210+03:00  INFO 99052 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-18T15:44:04.712+03:00  INFO 99052 --- [java-39-spring-boot-logging] [http-nio-8090-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 243 ms
+2026-09-18T15:44:10.389+03:00  INFO 99052 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : INFO log from PersonController
+2026-09-18T15:44:10.389+03:00  WARN 99052 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : WARN log from PersonController
+2026-09-18T15:44:10.390+03:00  INFO 99052 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : 2 adet person bulundu
+2026-09-18T15:46:09.128+03:00  INFO 99052 --- [java-39-spring-boot-logging] [RMI TCP Connection(10)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:46:09.131+03:00  INFO 99052 --- [java-39-spring-boot-logging] [RMI TCP Connection(10)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:46:09.655+03:00  INFO 99052 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:46:09.655+03:00 ERROR 99052 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:46:19.719+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 88924 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:46:19.721+03:00 DEBUG 88924 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Running with Spring Boot v4.1.1, Spring v7.0.9
+2026-09-18T15:46:19.722+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:46:20.671+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:46:20.684+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:46:20.684+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:46:20.727+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 968 ms
+2026-09-18T15:46:21.396+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:46:21.450+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:46:21.457+03:00  INFO 88924 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.194 seconds (process running for 2.557)
+2026-09-18T15:46:21.959+03:00  INFO 88924 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:46:21.960+03:00  INFO 88924 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:46:21.962+03:00  INFO 88924 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-09-18T15:46:30.461+03:00  INFO 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-7] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 296 ms
+2026-09-18T15:46:32.977+03:00 DEBUG 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : DEBUG log from PersonController
+2026-09-18T15:46:32.977+03:00  INFO 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : INFO log from PersonController
+2026-09-18T15:46:32.977+03:00  WARN 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : WARN log from PersonController
+2026-09-18T15:46:32.977+03:00 DEBUG 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : Person listesi hazırlanıyor
+2026-09-18T15:46:32.977+03:00  INFO 88924 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : 2 adet person bulundu
+2026-09-18T15:47:47.221+03:00  INFO 88924 --- [java-39-spring-boot-logging] [RMI TCP Connection(7)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:47:47.224+03:00  INFO 88924 --- [java-39-spring-boot-logging] [RMI TCP Connection(7)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:47:47.741+03:00  INFO 88924 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:47:47.741+03:00 ERROR 88924 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:48:00.084+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 98176 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:48:00.086+03:00 DEBUG 98176 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Running with Spring Boot v4.1.1, Spring v7.0.9
+2026-09-18T15:48:00.086+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:48:01.000+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:48:01.014+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:48:01.014+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:48:01.056+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 934 ms
+2026-09-18T15:48:01.633+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:48:01.685+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:48:01.692+03:00  INFO 98176 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.092 seconds (process running for 2.459)
+2026-09-18T15:48:05.358+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:48:05.359+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:48:05.361+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-18T15:48:05.859+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-8] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 269 ms
+2026-09-18T15:48:13.649+03:00 TRACE 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : TRACE log from PersonController
+2026-09-18T15:48:13.650+03:00 DEBUG 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : DEBUG log from PersonController
+2026-09-18T15:48:13.650+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : INFO log from PersonController
+2026-09-18T15:48:13.650+03:00  WARN 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : WARN log from PersonController
+2026-09-18T15:48:13.650+03:00 DEBUG 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : Person listesi hazırlanıyor
+2026-09-18T15:48:13.650+03:00  INFO 98176 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] com.aydindemir.service.PersonService     : 2 adet person bulundu
+2026-09-18T15:48:51.612+03:00  INFO 98176 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:48:51.616+03:00  INFO 98176 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:48:52.151+03:00  INFO 98176 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:48:52.152+03:00 ERROR 98176 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:49:15.146+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Starting Java39SpringBootLoggingApplication using Java 21.0.8 with PID 87160 (C:\java-2025\java-39-spring-boot-logging\target\classes started by aydin in C:\java-2025\java-39-spring-boot-logging)
+2026-09-18T15:49:15.148+03:00 DEBUG 87160 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Running with Spring Boot v4.1.1, Spring v7.0.9
+2026-09-18T15:49:15.149+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-18T15:49:16.066+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8090 (http)
+2026-09-18T15:49:16.080+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-18T15:49:16.080+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-18T15:49:16.122+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 939 ms
+2026-09-18T15:49:16.716+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-09-18T15:49:16.765+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8090 (http) with context path '/'
+2026-09-18T15:49:16.772+03:00  INFO 87160 --- [java-39-spring-boot-logging] [main] c.a.Java39SpringBootLoggingApplication   : Started Java39SpringBootLoggingApplication in 2.068 seconds (process running for 2.476)
+2026-09-18T15:49:17.464+03:00  INFO 87160 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-18T15:49:17.465+03:00  INFO 87160 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-18T15:49:17.467+03:00  INFO 87160 --- [java-39-spring-boot-logging] [RMI TCP Connection(5)-192.168.1.3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-09-18T15:49:21.088+03:00  INFO 87160 --- [java-39-spring-boot-logging] [http-nio-8090-exec-9] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 316 ms
+2026-09-18T15:49:28.325+03:00 ERROR 87160 --- [java-39-spring-boot-logging] [http-nio-8090-exec-10] c.a.controller.PersonController          : Person işlemi sırasında hata oluştu
+
+java.lang.RuntimeException: Test exception
+	at com.aydindemir.controller.PersonController.errorTest(PersonController.java:48) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622) ~[tomcat-embed-core-11.0.24.jar:6.1]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874) ~[spring-webmvc-7.0.9.jar:7.0.9]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710) ~[tomcat-embed-core-11.0.24.jar:6.1]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:132) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:59) ~[tomcat-embed-websocket-11.0.24.jar:11.0.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.9.jar:7.0.9]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:535) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:86) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:347) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:406) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1307) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:2036) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:74) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:949) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:483) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:74) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-09-18T15:53:07.832+03:00  INFO 87160 --- [java-39-spring-boot-logging] [RMI TCP Connection(10)-192.168.1.3] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2026-09-18T15:53:07.835+03:00  INFO 87160 --- [java-39-spring-boot-logging] [RMI TCP Connection(10)-192.168.1.3] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-18T15:53:08.363+03:00  INFO 87160 --- [java-39-spring-boot-logging] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-09-18T15:53:08.363+03:00 ERROR 87160 --- [java-39-spring-boot-logging] [http-nio-8090-Acceptor] org.apache.tomcat.util.net.Acceptor      : Socket accept failed
+
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:203) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(ServerSocketChannelImpl.java:383) ~[na:na]
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(ServerSocketChannelImpl.java:407) ~[na:na]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:626) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:145) ~[tomcat-embed-core-11.0.24.jar:11.0.24]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
