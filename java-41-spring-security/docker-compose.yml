@@ -1,20 +1,43 @@
 services:
+  postgres:
+    image: postgres:17
+    container_name: security-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: security_db
+      POSTGRES_USER: security_user
+      POSTGRES_PASSWORD: security_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - security_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U security_user -d security_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   mysql:
     image: mysql:8.4
     container_name: company-mysql
     restart: unless-stopped
-
     environment:
       MYSQL_ROOT_PASSWORD: root123!
       MYSQL_DATABASE: my_company_db
       MYSQL_USER: aydin
       MYSQL_PASSWORD: 123456!
-
     ports:
       - "3307:3306"
-
     volumes:
       - company_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123!"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
 volumes:
+  security_postgres_data:
   company_mysql_data:
