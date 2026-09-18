@@ -6,7 +6,6 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import com.bezkoder.springjwt.security.services.UserDetailsImpl;
@@ -35,9 +34,7 @@ public class JwtUtils {
     this.jwtExpirationMs = jwtExpirationMs;
   }
 
-  public String generateJwtToken(Authentication authentication) {
-    UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
+  public String generateAccessToken(UserDetailsImpl userPrincipal) {
     Date issuedAt = new Date();
     Date expiresAt = new Date(issuedAt.getTime() + jwtExpirationMs);
 
@@ -47,6 +44,10 @@ public class JwtUtils {
         .setExpiration(expiresAt)
         .signWith(key(), SignatureAlgorithm.HS256)
         .compact();
+  }
+
+  public long getAccessTokenExpirationSeconds() {
+    return jwtExpirationMs / 1000L;
   }
 
   public String getUserNameFromJwtToken(String token) {

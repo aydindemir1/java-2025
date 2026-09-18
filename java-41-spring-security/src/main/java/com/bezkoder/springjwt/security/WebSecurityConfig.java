@@ -73,9 +73,16 @@ public class WebSecurityConfig {
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/test/all").permitAll()
-            .anyRequest().authenticated());
+            .requestMatchers(
+                "/api/auth/signup",
+                "/api/auth/signin",
+                "/api/auth/refresh",
+                "/api/auth/logout")
+            .permitAll()
+            .requestMatchers("/api/test/all")
+            .permitAll()
+            .anyRequest()
+            .authenticated());
 
     http.authenticationProvider(authenticationProvider());
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
