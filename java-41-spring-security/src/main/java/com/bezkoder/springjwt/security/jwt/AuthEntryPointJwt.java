@@ -1,16 +1,16 @@
 package com.bezkoder.springjwt.security.jwt;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+import com.bezkoder.springjwt.exception.ApiErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,15 +35,16 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     logger.warn("Unauthorized request to {}: {}", request.getServletPath(), authException.getMessage());
 
+    HttpStatus status = HttpStatus.UNAUTHORIZED;
+    ApiErrorResponse body = ApiErrorResponse.of(
+        status.value(),
+        status.getReasonPhrase(),
+        "UNAUTHORIZED",
+        "Authentication is required to access this resource.",
+        request.getRequestURI());
+
+    response.setStatus(status.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-    body.put("error", "Unauthorized");
-    body.put("message", authException.getMessage());
-    body.put("path", request.getServletPath());
-
     objectMapper.writeValue(response.getOutputStream(), body);
   }
 }

@@ -77,7 +77,10 @@ public class WebSecurityConfig {
                 "/api/auth/signup",
                 "/api/auth/signin",
                 "/api/auth/refresh",
-                "/api/auth/logout")
+                "/api/auth/logout",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html")
             .permitAll()
             .requestMatchers("/api/test/all")
             .permitAll()

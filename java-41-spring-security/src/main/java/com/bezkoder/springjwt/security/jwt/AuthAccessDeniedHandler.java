@@ -1,14 +1,14 @@
 package com.bezkoder.springjwt.security.jwt;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import com.bezkoder.springjwt.exception.ApiErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,15 +29,16 @@ public class AuthAccessDeniedHandler implements AccessDeniedHandler {
       HttpServletResponse response,
       AccessDeniedException accessDeniedException) throws IOException {
 
+    HttpStatus status = HttpStatus.FORBIDDEN;
+    ApiErrorResponse body = ApiErrorResponse.of(
+        status.value(),
+        status.getReasonPhrase(),
+        "ACCESS_DENIED",
+        "You do not have permission to access this resource.",
+        request.getRequestURI());
+
+    response.setStatus(status.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("status", HttpServletResponse.SC_FORBIDDEN);
-    body.put("error", "Forbidden");
-    body.put("message", "Access Denied");
-    body.put("path", request.getServletPath());
-
     objectMapper.writeValue(response.getOutputStream(), body);
   }
 }

@@ -1,147 +1,104 @@
 package com.bezkoder.springjwt.controllers;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bezkoder.springjwt.models.ERole;
-import com.bezkoder.springjwt.models.Role;
-import com.bezkoder.springjwt.models.User;
+import com.bezkoder.springjwt.config.OpenApiConfig;
 import com.bezkoder.springjwt.payload.request.LoginRequest;
 import com.bezkoder.springjwt.payload.request.LogoutRequest;
 import com.bezkoder.springjwt.payload.request.RefreshTokenRequest;
 import com.bezkoder.springjwt.payload.request.SignupRequest;
 import com.bezkoder.springjwt.payload.response.MessageResponse;
 import com.bezkoder.springjwt.payload.response.TokenResponse;
-import com.bezkoder.springjwt.repository.RoleRepository;
-import com.bezkoder.springjwt.repository.UserRepository;
-import com.bezkoder.springjwt.security.services.RefreshTokenException;
-import com.bezkoder.springjwt.security.services.RefreshTokenService;
+import com.bezkoder.springjwt.security.services.AuthService;
 import com.bezkoder.springjwt.security.services.UserDetailsImpl;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "Authentication", description = "Registration, login and token lifecycle endpoints")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-  private final AuthenticationManager authenticationManager;
-  private final UserRepository userRepository;
-  private final RoleRepository roleRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final RefreshTokenService refreshTokenService;
+  private final AuthService authService;
 
-  public AuthController(
-      AuthenticationManager authenticationManager,
-      UserRepository userRepository,
-      RoleRepository roleRepository,
-      PasswordEncoder passwordEncoder,
-      RefreshTokenService refreshTokenService) {
-    this.authenticationManager = authenticationManager;
-    this.userRepository = userRepository;
-    this.roleRepository = roleRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.refreshTokenService = refreshTokenService;
+  public AuthController(AuthService authService) {
+    this.authService = authService;
   }
 
+  @Operation(
+      summary = "Register user",
+      description = "Creates a new user and assigns USER by default unless another supported role is requested.")
+  @ApiResponse(responseCode = "200", description = "User registered")
+  @ApiResponse(responseCode = "400", description = "Validation error", content = @Content)
+  @ApiResponse(responseCode = "409", description = "Username or email already exists", content = @Content)
   @PostMapping("/signup")
-  public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity.badRequest()
-          .body(new MessageResponse("Error: Username is already taken!"));
-    }
+  public ResponseEntity<MessageResponse> registerUser(
+      @Valid @RequestBody SignupRequest request) {
 
-    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-      return ResponseEntity.badRequest()
-          .body(new MessageResponse("Error: Email is already in use!"));
-    }
-
-    User user = new User(
-        signUpRequest.getUsername(),
-        signUpRequest.getEmail(),
-        passwordEncoder.encode(signUpRequest.getPassword()));
-
-    user.setRoles(resolveRoles(signUpRequest.getRole()));
-    userRepository.save(user);
-
+    authService.register(request);
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
 
+  @Operation(
+      summary = "Sign in",
+      description = "Authenticates credentials and returns a short-lived access JWT plus a refresh token.")
+  @ApiResponse(responseCode = "200", description = "Authentication successful",
+      content = @Content(schema = @Schema(implementation = TokenResponse.class)))
+  @ApiResponse(responseCode = "401", description = "Invalid credentials", content = @Content)
   @PostMapping("/signin")
   public ResponseEntity<TokenResponse> authenticateUser(
-      @Valid @RequestBody LoginRequest loginRequest) {
+      @Valid @RequestBody LoginRequest request) {
 
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            loginRequest.getUsername(),
-            loginRequest.getPassword()));
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-    return ResponseEntity.ok(refreshTokenService.issueTokens(userDetails));
+    return ResponseEntity.ok(authService.authenticate(request));
   }
 
+  @Operation(
+      summary = "Refresh tokens",
+      description = "Rotates the supplied refresh token and returns a new access/refresh token pair.")
+  @ApiResponse(responseCode = "200", description = "Token rotation successful",
+      content = @Content(schema = @Schema(implementation = TokenResponse.class)))
+  @ApiResponse(responseCode = "401", description = "Refresh token invalid, expired, revoked or reused", content = @Content)
   @PostMapping("/refresh")
-  public ResponseEntity<?> refreshToken(
-      @Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+  public ResponseEntity<TokenResponse> refreshToken(
+      @Valid @RequestBody RefreshTokenRequest request) {
 
-    try {
-      return ResponseEntity.ok(
-          refreshTokenService.refresh(refreshTokenRequest.getRefreshToken()));
-    } catch (RefreshTokenException exception) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(new MessageResponse(exception.getMessage()));
-    }
+    return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
   }
 
+  @Operation(
+      summary = "Log out current refresh session",
+      description = "Revokes the supplied refresh token. The operation is idempotent.")
+  @ApiResponse(responseCode = "204", description = "Refresh token revoked")
   @PostMapping("/logout")
-  public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest logoutRequest) {
-    refreshTokenService.logout(logoutRequest.getRefreshToken());
+  public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
+    authService.logout(request.getRefreshToken());
     return ResponseEntity.noContent().build();
   }
 
-  @PostMapping("/logout-all")
+  @Operation(
+      summary = "Log out all refresh sessions",
+      description = "Revokes all active refresh tokens for the currently authenticated user.",
+      security = @SecurityRequirement(name = OpenApiConfig.SECURITY_SCHEME_NAME))
+  @ApiResponse(responseCode = "204", description = "All refresh sessions revoked")
+  @ApiResponse(responseCode = "401", description = "Authentication required", content = @Content)
   @PreAuthorize("isAuthenticated()")
+  @PostMapping("/logout-all")
   public ResponseEntity<Void> logoutAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-    refreshTokenService.logoutAll(userDetails.getId());
+    authService.logoutAll(userDetails.getId());
     return ResponseEntity.noContent().build();
-  }
-
-  private Set<Role> resolveRoles(Set<String> requestedRoles) {
-    Set<Role> roles = new HashSet<>();
-
-    if (requestedRoles == null || requestedRoles.isEmpty()) {
-      roles.add(findRole(ERole.ROLE_USER));
-      return roles;
-    }
-
-    requestedRoles.forEach(role -> roles.add(switch (role) {
-      case "admin" -> findRole(ERole.ROLE_ADMIN);
-      case "mod" -> findRole(ERole.ROLE_MODERATOR);
-      default -> findRole(ERole.ROLE_USER);
-    }));
-
-    return roles;
-  }
-
-  private Role findRole(ERole roleName) {
-    return roleRepository.findByName(roleName)
-        .orElseThrow(() -> new IllegalStateException("Required role is not configured: " + roleName));
   }
 }
