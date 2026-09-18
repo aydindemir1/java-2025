@@ -13,6 +13,13 @@ The project covers the complete request flow from user registration and login to
 - User registration
 - User login
 - JWT access-token generation
+- Short-lived access tokens (15 minutes)
+- Opaque refresh tokens (7 days)
+- Refresh-token rotation
+- Refresh-token revocation
+- Refresh-token reuse detection
+- Logout and logout-all session revocation
+- SHA-256 storage of refresh-token hashes
 - JWT validation on incoming requests
 - Stateless Spring Security configuration
 - BCrypt password hashing
@@ -68,6 +75,9 @@ This project is intended to reinforce the following Spring Security concepts:
 - `SecurityContext`
 - `OncePerRequestFilter`
 - Bearer Token authentication
+- Access-token / refresh-token lifecycle
+- Refresh-token rotation and revocation
+- Refresh-token reuse detection
 - JWT claims and expiration
 - BCrypt password encoding
 - Stateless REST APIs
@@ -86,16 +96,20 @@ src/main/java/com/bezkoder/springjwt
 │   └── TestController.java
 ├── models
 │   ├── ERole.java
+│   ├── RefreshToken.java
 │   ├── Role.java
 │   └── User.java
 ├── payload
 │   ├── request
 │   │   ├── LoginRequest.java
+│   │   ├── LogoutRequest.java
+│   │   ├── RefreshTokenRequest.java
 │   │   └── SignupRequest.java
 │   └── response
-│       ├── JwtResponse.java
-│       └── MessageResponse.java
+│       ├── MessageResponse.java
+│       └── TokenResponse.java
 ├── repository
+│   ├── RefreshTokenRepository.java
 │   ├── RoleRepository.java
 │   └── UserRepository.java
 ├── security
@@ -106,6 +120,8 @@ src/main/java/com/bezkoder/springjwt
     │   ├── AuthTokenFilter.java
     │   └── JwtUtils.java
     └── services
+│       ├── RefreshTokenException.java
+│       ├── RefreshTokenService.java
 │       ├── UserDetailsImpl.java
 │       └── UserDetailsServiceImpl.java
 └── resources
@@ -113,10 +129,12 @@ src/main/java/com/bezkoder/springjwt
     └── db/migration
         ├── postgresql
         │   ├── V1__create_security_schema.sql
-        │   └── V2__seed_roles.sql
+        │   ├── V2__seed_roles.sql
+        │   └── V3__create_refresh_tokens.sql
         └── mysql
             ├── V1__create_security_schema.sql
-            └── V2__seed_roles.sql
+            ├── V2__seed_roles.sql
+            └── V3__create_refresh_tokens.sql
 ```
 
 ---
@@ -217,7 +235,10 @@ This removes application-startup seeding logic and keeps schema/data initializat
 | Method | Endpoint | Description | Authentication |
 |---|---|---|---|
 | POST | `/api/auth/signup` | Register a new user | Public |
-| POST | `/api/auth/signin` | Authenticate and receive JWT | Public |
+| POST | `/api/auth/signin` | Authenticate and receive access + refresh tokens | Public |
+| POST | `/api/auth/refresh` | Rotate refresh token and issue a new token pair | Public |
+| POST | `/api/auth/logout` | Revoke the supplied refresh token | Public |
+| POST | `/api/auth/logout-all` | Revoke all active refresh tokens for the authenticated user | Authenticated |
 
 ### Authorization Test Endpoints
 
@@ -347,7 +368,22 @@ Content-Type: application/json
 }
 ```
 
-A successful login returns a JWT access token together with user information and granted roles.
+A successful login returns a short-lived JWT access token, a long-lived opaque refresh token, user information, roles, and the access-token lifetime.
+
+Example response:
+
+```json
+{
+  "accessToken": "eyJ...",
+  "refreshToken": "opaque-random-token",
+  "tokenType": "Bearer",
+  "expiresIn": 900,
+  "id": 1,
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "roles": ["ROLE_USER"]
+}
+```
 
 ### Call a protected endpoint
 
@@ -355,6 +391,90 @@ A successful login returns a JWT access token together with user information and
 GET /api/test/user
 Authorization: Bearer <JWT_TOKEN>
 ```
+
+---
+
+## Refresh Token Lifecycle
+
+Milestone 3 uses two different token types:
+
+| Token | Type | Lifetime | Stored server-side |
+|---|---|---:|---|
+| Access token | Signed JWT | 15 minutes | No |
+| Refresh token | 256-bit opaque random token | 7 days | Only SHA-256 hash |
+
+Raw refresh tokens are returned to the client once. The database stores only their SHA-256 hashes, so a database leak does not directly expose usable refresh-token values.
+
+### Refresh
+
+```http
+POST /api/auth/refresh
+Content-Type: application/json
+```
+
+```json
+{
+  "refreshToken": "<current-refresh-token>"
+}
+```
+
+A successful refresh performs **rotation**:
+
+```text
+Refresh token A
+      ↓
+Validate hash / expiry / revocation
+      ↓
+Create refresh token B
+      ↓
+Revoke A
+      ↓
+A.replacedByTokenId = B.id
+      ↓
+Return new access token + B
+```
+
+The old refresh token can never be used as the current session token again.
+
+### Reuse detection
+
+If a refresh token that was already rotated is presented again, the server treats this as a possible token-theft signal:
+
+```text
+Previously rotated token reused
+          ↓
+replacedByTokenId is present
+          ↓
+Revoke every active refresh token for that user
+          ↓
+Reject request
+```
+
+### Logout
+
+```http
+POST /api/auth/logout
+Content-Type: application/json
+```
+
+```json
+{
+  "refreshToken": "<current-refresh-token>"
+}
+```
+
+Logout is idempotent and returns `204 No Content`. It revokes the supplied refresh token if it exists and is still active.
+
+### Logout all
+
+```http
+POST /api/auth/logout-all
+Authorization: Bearer <access-token>
+```
+
+This endpoint revokes every active refresh token belonging to the authenticated user.
+
+Because access tokens remain stateless and are not blacklisted in Milestone 3, an already-issued access token remains valid until its short expiry time. Revocation controls future refreshes and sessions without introducing a database/Redis lookup for every API request.
 
 ---
 
@@ -567,12 +687,55 @@ user_roles
 
 ---
 
+### ✅ Milestone 3 — Refresh Token + Logout + Revocation
+
+Milestone 3 adds server-controlled session renewal while preserving stateless JWT access-token validation.
+
+Completed improvements:
+
+- Reduced JWT access-token lifetime to 15 minutes
+- Added 7-day opaque refresh tokens generated with `SecureRandom`
+- Stores only SHA-256 refresh-token hashes in the database
+- Added the `refresh_tokens` persistence model and repository
+- Added PostgreSQL and MySQL `V3__create_refresh_tokens.sql` migrations
+- Added refresh-token rotation on every successful refresh
+- Added pessimistic locking around refresh-token consumption
+- Tracks replacement chains with `replaced_by_token_id`
+- Detects reuse of previously rotated refresh tokens
+- Revokes all active refresh tokens when reuse is detected
+- Added idempotent single-session logout
+- Added authenticated logout-all
+- Replaced the legacy `JwtResponse` with `TokenResponse`
+- Keeps access tokens stateless; no access-token blacklist is used
+
+Token lifecycle:
+
+```text
+signin
+  ↓
+Access JWT (15 min) + Refresh Token A (7 days)
+  ↓
+refresh(A)
+  ↓
+A revoked → Refresh Token B + new Access JWT
+  ↓
+logout(B)
+  ↓
+B revoked
+```
+
+---
+
 ## Current Scope
 
 Implemented in the current project:
 
 - Spring Security authentication
 - JWT access token
+- Opaque refresh tokens
+- Refresh-token rotation and revocation
+- Refresh-token reuse detection
+- Logout and logout-all
 - Role-based authorization
 - BCrypt
 - UserDetails / UserDetailsService
@@ -593,8 +756,6 @@ Implemented in the current project:
 
 Not yet implemented in this project:
 
-- Refresh Token
-- Logout / token revocation
 - Global exception handling
 - OpenAPI / Swagger
 - Testcontainers
@@ -612,7 +773,7 @@ These are intended as future extensions after the core Spring Security and JWT f
 
 - ✅ **Milestone 1** — Clean and working educational baseline
 - ✅ **Milestone 2** — PostgreSQL + Docker Compose + Flyway migrations
-- ⏳ **Milestone 3** — Refresh Token + logout + revocation
+- ✅ **Milestone 3** — Refresh Token + logout + revocation
 - ⏳ **Milestone 4** — OpenAPI + global exception handling
 - ⏳ **Milestone 5** — Security unit/integration tests + Testcontainers
 - ⏳ **Milestone 6** — Secrets + JWT key management + audit logging
